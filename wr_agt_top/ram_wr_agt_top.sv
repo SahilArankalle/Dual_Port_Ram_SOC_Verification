@@ -54,7 +54,7 @@ Version:	1.0
 	endfunction
 
 
-//-----------------  run() phase method  -------------------//
+//-----------------  run_phase method  -------------------//
        // Print the topology
 	task ram_wr_agt_top::run_phase(uvm_phase phase);
 		uvm_top.print_topology;

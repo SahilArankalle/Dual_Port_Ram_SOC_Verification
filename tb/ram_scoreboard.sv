@@ -25,14 +25,14 @@ Version:	1.0
 
 	// Extend ram_scoreboard from uvm_scoreboard
 
-	class ram_scoreboard extends uvm_scoreboard;
+class ram_scoreboard extends uvm_scoreboard;
 
-        // Declare handles for uvm_tlm_analysis_fifos parameterized by read & write transactions as fifo_rdh & fifo_wrh respectively
+    // Declare handles for uvm_tlm_analysis_fifos parameterized by read & write transactions as fifo_rdh & fifo_wrh respectively
 	//    Hint:  uvm_tlm_analysis_fifo #(read_xtn) fifo_rdh;
 	//           uvm_tlm_analysis_fifo #(write_xtn) fifo_wrh;
 	
 	uvm_tlm_analysis_fifo #(read_xtn) fifo_rdh;
-        uvm_tlm_analysis_fifo #(write_xtn) fifo_wrh;
+    uvm_tlm_analysis_fifo #(write_xtn) fifo_wrh;
 
 
 
@@ -53,6 +53,85 @@ Version:	1.0
 	// Declare handles of type write_xtn & read_xtn to store the tlm_analysis_fifo data 	
 		write_xtn wr_data;
 		read_xtn rd_data;
+        // LAB: Declare handles for read & write coverage data as read_cov_data
+	// & write_cov_data of type read_xtn & write_xtn respectively 
+		
+		write_xtn write_cov_data;
+		read_xtn read_cov_data;
+
+
+// LAB : write the covergroup ram_fcov1 for write transactions
+covergroup ram_fcov1;
+option.per_instance=1;
+       //ADDRESS
+     
+        WR_ADD : coverpoint write_cov_data.address {
+					bins low = {[0:100]};
+					bins mid1 = {[101:511]};
+					bins mid2 = {[512:1023]};
+					bins mid3 = {[1024:1535]};
+					bins mid4 = {[1536:2047]};
+					bins mid5 = {[2048:2559]};
+					bins mid6 = {[2560:3071]};
+					bins mid7 = {[3072:3583]};
+					bins mid8 = {[3584:4094]};
+					bins high = {[3996:4095]};
+					}
+    	     	     
+        //DATA
+        DATA : coverpoint write_cov_data.data {
+                   bins low  =  {[0:64'h0000_0000_0000_ffff]};
+		   bins mid1 = {[64'h0000_0000_0001_0000:64'h0000_0000_ffff_ffff]};
+		   bins mid2 = {[64'h0000_0001_0000_0000:64'h0000_ffff_ffff_ffff]};
+		   bins high = {[64'h0001_0000_0000_0000:64'h0000_ffff_ffff_ffff]};
+                 }
+    
+        // WRITE
+        WR : coverpoint write_cov_data.write {
+               bins wr_bin = {1};
+    	 }
+    
+    
+        //Write Operation - Functional Coverage
+        WRITE_FC : cross WR,WR_ADD,DATA;
+          
+    endgroup
+
+//LAB : write the covergroup ram_fcov2 for read transactions
+    covergroup ram_fcov2;
+option.per_instance=1;
+       //ADDRESS
+        RD_ADD : coverpoint read_cov_data.address {
+					bins low = {[0:100]};
+					bins mid1 = {[101:511]};
+					bins mid2 = {[512:1023]};
+					bins mid3 = {[1024:1535]};
+					bins mid4 = {[1536:2047]};
+					bins mid5 = {[2048:2559]};
+					bins mid6 = {[2560:3071]};
+					bins mid7 = {[3072:3583]};
+					bins mid8 = {[3584:3995]};
+					bins high = {[3996:4095]};
+                 }
+       
+        //DATA
+        DATA : coverpoint read_cov_data.data {
+                   bins low = {[0:64'h0000_0000_0000_ffff]};
+		   bins mid1 = {[64'h0000_0000_0001_0000:64'h0000_0000_ffff_ffff]};
+		   bins mid2 = {[64'h0000_0001_0000_0000:64'h0000_ffff_ffff_ffff]};
+		   bins high = {[64'h0001_0000_0000_0000:64'h0000_ffff_ffff_ffff]};
+                 }
+    
+        // READ
+        RD : coverpoint read_cov_data.read {
+               bins rd_bin = {1};
+    	 }
+        
+        //Read Operation - Functional Coverage
+        READ_FC : cross RD,RD_ADD,DATA;
+        
+    endgroup
+
 
 //------------------------------------------
 // Methods
@@ -73,10 +152,14 @@ endclass
        // Add Constructor function
            // Create instances of uvm_tlm_analysis fifos inside the constructor
            // using new("fifo_h", this)
-     	function ram_scoreboard::new(string name,uvm_component parent);
+    function ram_scoreboard::new(string name,uvm_component parent);
 		super.new(name,parent);
 		 fifo_rdh = new("fifo_rdh", this);
    		 fifo_wrh= new("fifo_wrh", this);
+           // Create instances of ram_fcov1 & ram_fcov2 
+           // using new
+		 ram_fcov1 = new;
+		 ram_fcov2 = new;
 	endfunction
 
         
@@ -108,6 +191,7 @@ endclass
         
       	if(ref_data.exists(rd.address))
       	begin
+        
         rd.data = ref_data[rd.address] ;
         rd_xtns_in ++;
         return(1);
@@ -133,7 +217,11 @@ endclass
             fifo_wrh.get(wr_data);
              mem_write(wr_data);
              `uvm_info("WRITE SB","write data" , UVM_LOW)
-              wr_data.print; end
+              wr_data.print;
+			  write_cov_data = wr_data;
+// LAB : sample covergroup for write transactions
+			ram_fcov1.sample();
+			 end
 // In forever loop
 // get and print the read data using the tlm fifo
 // Call the method check_data
@@ -142,7 +230,8 @@ endclass
             fifo_rdh.get(rd_data);
              `uvm_info("READ SB", "read data" , UVM_LOW)
               rd_data.print;
-             check_data(rd_data); end
+             check_data(rd_data);
+			 end
          join
        endtask
 
@@ -169,7 +258,9 @@ endclass
   		end
        	else
           	uvm_report_info(get_type_name(), $psprintf("No Data written in the address=%d \n %s",rd.address, rd.sprint()));
-
+	read_cov_data = rd;
+	// LAB : sample covergroup for read transactions
+    	ram_fcov2.sample();
 	endfunction
 
 

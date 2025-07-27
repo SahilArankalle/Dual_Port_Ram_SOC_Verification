@@ -83,24 +83,23 @@ Version:	1.0
 		// read config object
              if (has_ragent) begin
                 // LAB : initialize the dynamic array of handles m_rd_cfg to no_of_duts
-                m_rd_cfg = new[no_of_duts];        
+                m_rd_cfg = new[no_of_duts];                        
 
 		foreach(m_rd_cfg[i]) begin
 		// LAB : create the instance for ram_rd_agent_config
         	m_rd_cfg[i] = ram_rd_agent_config::type_id::create($sformatf("m_rd_cfg[%0d]", i));
-
-        // LAB : for all the configuration objects, set the following parameters 
+                
+                // LAB : for all the configuration objects, set the following parameters 
 		// is_active to UVM_ACTIVE
 		// Get the virtual interface from the config database
 	        if (!uvm_config_db#(virtual ram_if)::get(this, "", $sformatf("vif_%0d", i), m_rd_cfg[i].vif))
                 `uvm_fatal("VIF CONFIG", "cannot get()interface vif from uvm_config_db. Have you set() it?")
 		    m_rd_cfg[i].is_active = UVM_ACTIVE;
-
+		
 		// LAB : assign the ram_rd_agent_config handle to the enviornment
 		// config's(ram_env_config) ram_rd_agent_config handle
         	m_tb_cfg.m_rd_agent_cfg[i] = m_rd_cfg[i];
-
-                
+                               
                 end
              end
 		// assign no_of_duts to local m_tb_cfg.no_of_duts
@@ -122,13 +121,13 @@ Version:	1.0
                 m_tb_cfg.m_wr_agent_cfg = new[no_of_duts];
                 if(has_ragent)
 		// LAB :  initialize the dynamic array of handles for ram_rd_agent_config equal to no_of_duts
-               m_tb_cfg.m_rd_agent_cfg = new[no_of_duts];
+               m_tb_cfg.m_rd_agent_cfg = new[no_of_duts];               
                 // Call function config_ram which configures all the parameters
                 config_ram; 
-		// set the env config object into UVM config DB  
+		// set the config object into UVM config DB  
 	 	uvm_config_db #(ram_env_config)::set(this,"*","ram_env_config",m_tb_cfg);
 		// call super.build()
-     		super.build();
+     		super.build_phase(phase);
 		// create the instance for ram_envh handle
 		ram_envh=ram_tb::type_id::create("ram_envh", this);
 	endfunction
@@ -140,7 +139,7 @@ Version:	1.0
 // CLASS DESCRIPTION
 //------------------------------------------
 
-   // Extend ram_single_addr_test from  ram_base_test
+   // Extend ram_single_addr_test from ram_base_test
 	class ram_single_addr_test extends ram_base_test;
 
   
@@ -242,7 +241,7 @@ endclass
 // CLASS DESCRIPTION
 //------------------------------------------
 
-   // Extend ram_odd_addr_test from  ram_base_test
+   // Extend ram_odd_addr_test from ram_base_test
 	class ram_odd_addr_test extends ram_base_test;
 
   
@@ -285,7 +284,7 @@ endclass
  //start the sequence wrt virtual sequencer
           ram_seqh.start(ram_envh.v_sequencer);
  //drop objection
-         phase.drop_objection(this);
+        phase.drop_objection(this);
 	endtask   
 
 
@@ -293,7 +292,7 @@ endclass
 // CLASS DESCRIPTION
 //------------------------------------------
 
-   // Extend ram_even_addr_test from  ram_base_test
+   // Extend ram_even_addr_test from ram_base_test
 	class ram_even_addr_test extends ram_base_test;
 
   

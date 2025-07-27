@@ -78,7 +78,7 @@ endclass
         endfunction
 
 
-//-----------------  run() phase method  -------------------//
+//-----------------  run_phase()method  -------------------//
 	
 
         // In forever loop

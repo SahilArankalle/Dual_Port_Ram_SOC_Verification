@@ -30,13 +30,13 @@ Version:	1.0
    // Factory Registration
 	`uvm_component_utils(ram_virtual_sequencer)
 
-   // LAB : Declare dynamic array of handles for ram_wr_sequencer and ram_rd_sequencer as wr_seqrh[] & rd_seqrh[]	
-   ram_wr_sequencer wr_seqrh[];
-   ram_rd_sequencer rd_seqrh[];
+   // LAB : Declare dynamic array of handles for ram_wr_sequencer and ram_rd_sequencer as wr_seqrh[] & rd_seqrh[]
+	ram_wr_sequencer wr_seqrh[];
+	ram_rd_sequencer rd_seqrh[];
 	
 
    // LAB : Declare handle for ram_env_config 
-	ram_env_config m_cfg;
+  	ram_env_config m_cfg;
 
 
 //------------------------------------------
@@ -63,5 +63,6 @@ Version:	1.0
 		// the config parameter no_of_duts
 		wr_seqrh = new[m_cfg.no_of_duts];
 		rd_seqrh = new[m_cfg.no_of_duts];
+
     		
 	endfunction

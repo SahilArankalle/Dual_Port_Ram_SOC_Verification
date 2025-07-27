@@ -31,7 +31,7 @@ Version:	1.0
     	`uvm_object_utils(read_xtn)
 
 //------------------------------------------
-// DATA MEMBERS (Outputs non rand, inputs rand)
+// DATA MEMBERS (Outputs non-rand, inputs rand)
 //------------------------------------------
 
  

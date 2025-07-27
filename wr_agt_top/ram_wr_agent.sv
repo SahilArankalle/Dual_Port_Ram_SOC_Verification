@@ -57,7 +57,7 @@ endclass : ram_wr_agent
      
   
 //-----------------  build() phase method  -------------------//
-         // Call parent build phase
+         // Call parent build_phase
          // Create ram_wr_monitor instance
          // If is_active=UVM_ACTIVE, create ram_wr_driver and ram_wr_sequencer instances
 	function void ram_wr_agent::build_phase(uvm_phase phase);

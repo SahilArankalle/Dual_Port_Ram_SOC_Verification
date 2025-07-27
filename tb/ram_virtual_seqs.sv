@@ -40,7 +40,7 @@ class ram_vbase_seq extends uvm_sequence #(uvm_sequence_item);
 	`uvm_object_utils(ram_vbase_seq)  
   // LAB : Declare dynamic array of handles for ram_wr_sequencer and ram_rd_sequencer as wr_seqrh[] & rd_seqrh[]
      ram_wr_sequencer wr_seqrh[];
-	 ram_rd_sequencer rd_seqrh[];   
+	 ram_rd_sequencer rd_seqrh[];          
   // Declare handle for virtual sequencer
         ram_virtual_sequencer vsqrh;
   // Declare Handles for all the sequences
@@ -57,8 +57,8 @@ class ram_vbase_seq extends uvm_sequence #(uvm_sequence_item);
 	ram_odd_rd_xtns odd_rxtns;
 
   // LAB :  Declare handle for ram_env_config
-	ram_env_config m_cfg;	
-
+	
+	ram_env_config m_cfg;
 
 //------------------------------------------
 // METHODS
@@ -80,11 +80,11 @@ class ram_vbase_seq extends uvm_sequence #(uvm_sequence_item);
 task ram_vbase_seq::body();
 // get the config object ram_env_config from database using uvm_config_db 
 if(!uvm_config_db #(ram_env_config)::get(null, get_full_name(), "ram_env_config", m_cfg))
-	`uvm_fatal("CONFIG", "cannot get() m_cfg from uvm_config_db. have you set() it?")
+	`uvm_fatal("CONFIG", "cannot get() m_cfg from uvm_config_db. have you set() it?")	  
 // initialize the dynamic arrays for write & read sequencers to m_cfg.no_of_duts
+ 
 	wr_seqrh = new[m_cfg.no_of_duts];
-	rd_seqrh = new[m_cfg.no_of_duts];
-  
+	rd_seqrh = new[m_cfg.no_of_duts];  
 
   assert($cast(vsqrh,m_sequencer)) else begin
     `uvm_error("BODY", "Error in $cast of virtual sequencer")
@@ -92,12 +92,12 @@ if(!uvm_config_db #(ram_env_config)::get(null, get_full_name(), "ram_env_config"
 // Assign ram_wr_sequencer & ram_rd_sequencer handles to virtual sequencer's 
 // ram_wr_sequencer & ram_rd_sequencer handles
 // Hint : use foreach loop
-
+ 
 foreach(wr_seqrh[i])
 	wr_seqrh[i] = vsqrh.wr_seqrh[i];
 foreach(rd_seqrh[i])
 	rd_seqrh[i] = vsqrh.rd_seqrh[i];
- 
+
 endtask: body
 
    
@@ -132,17 +132,18 @@ endtask: body
                  super.body();
                  // LAB : create the instances for ram_single_addr_wr_xtns & ram_single_addr_rd_xtns
 				single_wxtns = ram_single_addr_wr_xtns::type_id::create("single_wxtns");
-				single_rxtns = ram_single_addr_rd_xtns::type_id::create("single_rxtns");
+				single_rxtns = ram_single_addr_rd_xtns::type_id::create("single_rxtns");                  
                     if(m_cfg.has_wagent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++)
                   // LAB : Start the write sequence on all the write sequencers 
-	              		single_wxtns.start(wr_seqrh[i]);
+	              		single_wxtns.start(wr_seqrh[i]);	              
                    end
 
                    if(m_cfg.has_ragent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++)
 		  // LAB : Start the read sequence on all the read sequencers  
 	            		single_rxtns.start(rd_seqrh[i]);  
+	               
                     end 
 
        endtask
@@ -177,17 +178,19 @@ endtask: body
                  super.body();
                   // LAB :  create the instances for ram_ten_wr_xtns & ram_ten_rd_xtns
 		    		ten_wxtns = ram_ten_wr_xtns::type_id::create("ten_wxtns");
-					ten_rxtns = ram_ten_rd_xtns::type_id::create("ten_rxtns");
+					ten_rxtns = ram_ten_rd_xtns::type_id::create("ten_rxtns");		    
+
                    if(m_cfg.has_wagent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++) 
 		  // LAB :  Start the write sequence on all the write sequencers
 	               	ten_wxtns.start(wr_seqrh[i]);
+	               
                    end
 
                    if(m_cfg.has_ragent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++) 
 		  // LAB :  Start the read sequence on all the read sequencers
-	            	ten_rxtns.start(rd_seqrh[i]);
+	            	ten_rxtns.start(rd_seqrh[i]);	               
                     end 
 
        endtask
@@ -226,18 +229,20 @@ endtask: body
                  super.body();
 		// LAB :  create the instances for ram_even_wr_xtns & ram_even_rd_xtns
 				even_wxtns = ram_even_wr_xtns::type_id::create("even_wxtns");
-				even_rxtns = ram_even_rd_xtns::type_id::create("even_rxtns");
+				even_rxtns = ram_even_rd_xtns::type_id::create("even_rxtns");                    
 
                    if(m_cfg.has_wagent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++) 
 		// LAB :  Start the write sequence on all the write sequencers
 	               even_wxtns.start(wr_seqrh[i]);
+	               
                    end
 
                    if(m_cfg.has_ragent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++)
 		// LAB :  Start the read sequence on all the read sequencers
 	               even_rxtns.start(rd_seqrh[i]);
+	               
                     end 
 
        endtask
@@ -274,17 +279,19 @@ endtask: body
                  super.body();
 		// LAB :  create the instances for ram_odd_wr_xtns & ram_odd_rd_xtns
                    odd_wxtns = ram_odd_wr_xtns::type_id::create("odd_wxtns");
-				   odd_rxtns = ram_odd_rd_xtns::type_id::create("odd_rxtns");
+				   odd_rxtns = ram_odd_rd_xtns::type_id::create("odd_rxtns");                   
+
                    if(m_cfg.has_wagent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++) 
 		// LAB :  Start the write sequence on all the write sequencers
 	            	odd_wxtns.start(wr_seqrh[i]);
+	              
                    end
 
                    if(m_cfg.has_ragent) begin
                    for (int i=0 ; i < m_cfg.no_of_duts; i++) 
 		// LAB :  Start the read sequence on all the read sequencers
-	            	odd_rxtns.start(rd_seqrh[i]);
+	            	odd_rxtns.start(rd_seqrh[i]);	               
                     end 
 
        endtask

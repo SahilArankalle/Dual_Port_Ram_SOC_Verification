@@ -32,7 +32,7 @@ Version:	1.0
    // Declare handle for configuration object
         ram_rd_agent_config m_cfg;
        
-   // Declare handles of ram_rd_monitor,ram_rd_sequencer and ram_rd_driver
+   // Declare handles of ram_wr_monitor,ram_wr_sequencer and ram_wr_driver
    // with Handle names as monh, seqrh, drvh respectively
 	ram_rd_monitor monh;
 	ram_rd_sequencer seqrh;
@@ -58,8 +58,8 @@ endclass : ram_rd_agent
   
 //-----------------  build() phase method  -------------------//
          // Call parent build phase
-         // Create ram_wr_monitor instance
-         // If is_active=UVM_ACTIVE, create ram_wr_driver and ram_wr_sequencer instances
+         // Create ram_rd_monitor instance
+         // If is_active=UVM_ACTIVE, create ram_rd_driver and ram_rd_sequencer instances
 	function void ram_rd_agent::build_phase(uvm_phase phase);
 		super.build_phase(phase);
                 // get the config object using uvm_config_db 
